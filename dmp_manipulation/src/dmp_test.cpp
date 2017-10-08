@@ -15,10 +15,7 @@
 
 using namespace Eigen;
 
-int num_x=12;
-int num_y=12;
-
-//variables & functions for service
+static int saveiter=0;
 
 int main(int argc, char **argv)
 {
@@ -64,10 +61,20 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-	   
-  ros::spin();
 
+
+  ros::spinOnce();
+	
+  if(saveiter%50==0) 
+  {
+      dmpmanager.saveTrajectory();
+      saveiter=0;
   }
+
+    loop_rate.sleep();
+    saveiter++;
+  }
+  ros::spin();
   return 0;
 }
 

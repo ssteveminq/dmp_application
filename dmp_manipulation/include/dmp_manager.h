@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
@@ -30,7 +31,13 @@
 #include <pcl/kdtree/kdtree.h>
 
 
+using namespace std;
 
+#define arm_flex_joint 0
+#define arm_lift_joint 1
+#define arm_roll_joint 2
+#define wrist_flex joint 3
+#define wrist_roll_joint 4
 
 
 class DMP_Manager{
@@ -41,14 +48,23 @@ public:
 	~DMP_Manager();
 
 
-	ros::Publisher static_belief_map_pub;
-	ros::Publisher belief_pub;
-	ros::Publisher human_target_pub;
+    int dimension;
+    
+	ros::Publisher dmp_pub;
+	ros::Publisher jointtrajectory_pub;
+
+    ofstream basisTrajectory;
+    
+    vector< vector <double> > JointTrajectoryset;
+    sensor_msgs::JointState JointStates_traj;
+    map<int,sensor_msgs::JointState> trajectory_map;
+
 
 	int index;
-	bool IsHeadMoving;
 	void Init_parameters();
 
     void global_pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     void joint_state_callback(const sensor_msgs::JointState::ConstPtr &msg);
+    void saveTrajectory();
+
 };

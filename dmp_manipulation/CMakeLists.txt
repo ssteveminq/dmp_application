@@ -42,7 +42,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES humantracking
 #  CATKIN_DEPENDS roscpp geometry_msgs
-  DEPENDS
+   CATKIN_DEPENDS
   	roscpp
   	geometry_msgs
   	sensor_msgs
@@ -52,6 +52,7 @@ catkin_package(
  )
 
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 )
@@ -61,3 +62,18 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_executable(dmp_test src/dmp_test.cpp ${SOURCES})
 target_link_libraries(dmp_test ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
+
+
+install(TARGETS dmp_test
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)

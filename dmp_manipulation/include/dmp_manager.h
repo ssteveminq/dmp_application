@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <stdint.h>
+#include <math.h>
 #include "ros/ros.h"
 #include <ros/package.h>
 #include <Eigen/Dense>
@@ -30,6 +31,15 @@
 #include <pcl/point_types.h>
 #include <pcl/kdtree/kdtree.h>
 
+//Msg & Srvs
+#include <dmp/LearnDMPFromDemo.h>
+#include <dmp/SetActiveDMP.h>
+#include <dmp/GetDMPPlan.h>
+#include <dmp/DMPData.h>
+#include <dmp/DMPPoint.h>
+#include <dmp/DMPTraj.h>
+
+
 
 using namespace std;
 
@@ -47,7 +57,6 @@ public:
 	DMP_Manager(int numofhuman);
 	~DMP_Manager();
 
-
     int dimension;
     
 	ros::Publisher dmp_pub;
@@ -55,9 +64,13 @@ public:
 
     ofstream basisTrajectory;
     
-    vector< vector <double> > JointTrajectoryset;
+    vector< vector <double> > JointTrajectoryset;       //[time x joint number]
     sensor_msgs::JointState JointStates_traj;
     map<int,sensor_msgs::JointState> trajectory_map;
+
+    vector<float> Kgains;
+    vector<float> Dgains;
+
 
 
 	int index;
@@ -66,5 +79,9 @@ public:
     void global_pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     void joint_state_callback(const sensor_msgs::JointState::ConstPtr &msg);
     void saveTrajectory();
-
+    void loadTrajectory();
+    void printTrajectory();
+    bool makeLFDRequest();
+    bool makeSetActiveRequest();
+    bool makeGetPlanRequest();
 };

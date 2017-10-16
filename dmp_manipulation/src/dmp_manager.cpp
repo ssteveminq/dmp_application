@@ -1,7 +1,7 @@
 #include "dmp_manager.h"
 
-
 DMP_Manager::DMP_Manager(){
+    m_tau=0.0;
 	// Init_parameters();
 }
 DMP_Manager::~DMP_Manager(){}
@@ -11,24 +11,19 @@ void DMP_Manager::Init_parameters()
 
     int dim=2;
     JointTrajectoryset.resize(dim);  //create size of joint trajectory
-
-
-
-
 }
+
 void DMP_Manager::global_pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
 
 
 
-
 }
-
 
 void DMP_Manager::joint_state_callback(const sensor_msgs::JointState::ConstPtr &msg)
 {
 //ROS_INFO("recieved sensor_msgs");
-    vector<double> tempJointTraj(5,0.0);
+    stvd tempJointTraj(5,0.0);
     
     tempJointTraj[0]=static_cast<double>( msg->position[0]);
     tempJointTraj[1]=static_cast<double>( msg->position[1]);
@@ -57,8 +52,6 @@ void DMP_Manager::saveTrajectory()
     }
     
     basisTrajectory.close();
-
-
 }
 
 void DMP_Manager::printTrajectory()
@@ -79,21 +72,17 @@ void DMP_Manager::printTrajectory()
     // }
 }
 
-
 void DMP_Manager::loadTrajectory()
 {
-    bool    columncheck=false;
     char    spell[150]; 
     int     iter=0;
     float   tempdata=0.0;
     char    *data_seg[50];
-    char    *strtokens[5];
     int     i,j=0;
     int     res;
-    int     DataLenth=0;
     string  str;
     int     Dim=0;
-    std::vector<double> tempDataVec;
+    stvd    tempDataVec;
 
     ROS_INFO("load trajectory");
     ifstream laodtrjfile;
@@ -125,15 +114,14 @@ void DMP_Manager::loadTrajectory()
             Dim=i-1;                                         //check dimension : time-1
 
             cout<<"Feature dimension is"<<Dim<<endl;
-            tempDataVec.resize(Dim);
+            tempDataVec.resize(Dim-1);
             
             for(j=1;j<Dim;j++)
             {
                 str=data_seg[j];
                 str.erase(str.length(),1) ;
                 tempdata = static_cast<float>(atof(str.c_str())) ;
-                tempDataVec[j]=tempdata;
-
+                tempDataVec[j-1]=tempdata;
             }
 
             JointTrajectoryset.push_back(tempDataVec);
@@ -144,7 +132,7 @@ void DMP_Manager::loadTrajectory()
    laodtrjfile.close();
 
    //setDimension
-   dimension=Dim;
+   dimension=4;
 
    //print trajectory
    printTrajectory();
@@ -153,23 +141,50 @@ void DMP_Manager::loadTrajectory()
 bool DMP_Manager::makeLFDRequest()
 {
     dmp::DMPTraj trajectory_msgs;
-    int time_length = JointTrajectoryset.size();
-    int trj_length = JointTrajectoryset[0].size();
-    float dt=0.01;
-    float K = 100.0;
-    float D = 2.0 * sqrt(K);
+
+    //test with same data with sample.py
+    dimension=2;
+    int time_length = 4;
+    int trj_length =dimension;
+
+    JointTrajectoryset.resize(time_length);
+    
+    for(int k(0);k<time_length;k++)
+    {   
+        JointTrajectoryset[k].resize(dimension);
+
+    }
+
+    JointTrajectoryset[0][0]= 1.0;
+    JointTrajectoryset[0][1]= 1.0;
+
+    JointTrajectoryset[1][0]= 2.0;
+    JointTrajectoryset[1][1]= 2.0;
+
+    JointTrajectoryset[2][0]= 3.0;
+    JointTrajectoryset[2][1]= 4.0;
+
+    JointTrajectoryset[3][0]= 6.0;
+    JointTrajectoryset[3][1]= 8.0;
+
+    // int time_length = JointTrajectoryset.size();
+    // int trj_length = JointTrajectoryset[0].size();
+    double dt = 1.0;
+    double K  = 100.0;
+    double D  = 2.0 * sqrt(K);
 
     for(int i(0);i<time_length;i++)
     {
         dmp::DMPPoint dmp_point;        
-        for(int j(0);j<JointTrajectoryset[i].size();j++)
+        for(int j(0);j<trj_length;j++)
         {
-            float tempdata = static_cast<float> (JointTrajectoryset[i][j]);
+            double tempdata = static_cast<double> (JointTrajectoryset[i][j]);
             dmp_point.positions.push_back(tempdata);
+            dmp_point.velocities.push_back(0.0);
         }
 
        trajectory_msgs.points.push_back(dmp_point);
-       trajectory_msgs.times.push_back(static_cast<float>(i*dt));
+       trajectory_msgs.times.push_back(static_cast<double>(i*dt));
     }
 
     Kgains.resize(dimension);
@@ -181,22 +196,105 @@ bool DMP_Manager::makeLFDRequest()
         Dgains[i]=D;
     }
 
+    //calling service learnfromdemonstration
+    dmp::LearnDMPFromDemo lfd_srv;  
+    lfd_srv.request.demo = trajectory_msgs;
+    lfd_srv.request.k_gains = Kgains;
+    lfd_srv.request.d_gains = Dgains;
+    lfd_srv.request.num_bases = 5;
+
+    if(client_lfd.call(lfd_srv))
+    {
+        ROS_INFO("Learning From Demonstration srv is done \n");
+        m_dmp_dataset.clear();
+        // dmp_dataset=lfd_srv.response.dmp_list;
+        int list_size =lfd_srv.response.dmp_list.size();
+        std::cout<<"list size : "<<list_size<<std::endl;
+        std::cout<<"tau size is : "<<lfd_srv.response.tau<<std::endl;
+        
+       set_tau(lfd_srv.response.tau);
+        
+        for(int i(0);i<lfd_srv.response.dmp_list.size();i++)
+        {
+          m_dmp_dataset.push_back(lfd_srv.response.dmp_list[i]);
+          // cout<<lfd_srv.response.dmp_list[i]<<", ";
+        }
+        //calling set_activeset_dmp service;
+        dmp::SetActiveDMP sap_srv;
+        sap_srv.request.dmp_list=lfd_srv.response.dmp_list;
+        if(client_sap.call(sap_srv))
+        {
+           ROS_INFO("set_Active_DMP_srv succeed!");
+           return true;
+        }
+        else
+        {
+           ROS_INFO("Unable to call set_Active_DMP_srv");
+           return false;
+        }
+
+    }
+    else{
+
+        ROS_INFO("Unable to call LearnDMPFromDemo_srv.");
+        return false;
+    }
+    
 }
 
+void DMP_Manager::set_tau(double tau_)
+{
+    m_tau=tau_;
+}
 
 bool DMP_Manager::makeSetActiveRequest()
 {
+    //this service will be called in learning from demonstration service
+}
 
+bool DMP_Manager::makeGetPlanRequest(stvd& x_0_, stvd& x_dot_0_, double t_0_, stvd& goal_, stvd& goal_thresh_, double seg_length_, double tau_, double dt_, int integrate_iter_)
+{
+    dmp::GetDMPPlan gdp_srv;
+    //setting parameter for calling service
+    gdp_srv.request.x_0            = x_0_;
+    gdp_srv.request.x_dot_0        = x_dot_0_ ;
+    gdp_srv.request.t_0            = t_0_;
+    gdp_srv.request.goal           = goal_;
+    gdp_srv.request.goal_thresh    = goal_thresh_;
+    gdp_srv.request.seg_length     = seg_length_;
+    gdp_srv.request.tau            = tau_;
+    gdp_srv.request.dt             = dt_;
+    gdp_srv.request.integrate_iter = integrate_iter_;
 
+    if(client_gdp.call(gdp_srv))
+    {
+        ROS_INFO("get_DMP_Plan_srv succeed!");
+        m_dmptrajectory=gdp_srv.response.plan;
+        print_dmp_trajectory();
 
+        return true;
+    }
+    else
+    {
+        ROS_INFO("Unable to call get_DMP_plan_srv");
+        return false;
+    }
 
 }
 
+void DMP_Manager::print_dmp_trajectory(){
 
-bool DMP_Manager::makeGetPlanRequest()
-{
+    int data_size = m_dmptrajectory.points.size();
 
-
-
+    for(int i(0);i<data_size;i++)
+    {
+        std::cout<<"time : "<<m_dmptrajectory.times[i]<<" , ";
+        for(int j(0);j<m_dmptrajectory.points[0].positions.size();j++)
+        {
+            std::cout<<"pos : "<<m_dmptrajectory.points[i].positions[j]<<", ";
+            std::cout<<"===vel : "<<m_dmptrajectory.points[i].velocities[j]<<", ";
+        }
+        std::cout<<std::endl;
+    }
 
 }

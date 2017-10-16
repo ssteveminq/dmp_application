@@ -39,16 +39,15 @@
 #include <dmp/DMPPoint.h>
 #include <dmp/DMPTraj.h>
 
-
-
 using namespace std;
 
 #define arm_flex_joint 0
 #define arm_lift_joint 1
 #define arm_roll_joint 2
-#define wrist_flex joint 3
+#define wrist_flex_joint 3
 #define wrist_roll_joint 4
 
+typedef std::vector<double> stvd;
 
 class DMP_Manager{
 
@@ -64,24 +63,37 @@ public:
 
     ofstream basisTrajectory;
     
-    vector< vector <double> > JointTrajectoryset;       //[time x joint number]
+    vector< stvd >          JointTrajectoryset;       //[time x joint number]
     sensor_msgs::JointState JointStates_traj;
     map<int,sensor_msgs::JointState> trajectory_map;
+    std::vector< dmp::DMPData > m_dmp_dataset;
 
-    vector<float> Kgains;
-    vector<float> Dgains;
+    dmp::DMPTraj m_dmptrajectory;
 
+    stvd Kgains;
+    stvd Dgains;
 
+    ros::ServiceClient client_lfd;
+    ros::ServiceClient client_sap;
+    ros::ServiceClient client_gdp;
 
+    double m_tau;
 	int index;
 	void Init_parameters();
 
+    //ros callback function
     void global_pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     void joint_state_callback(const sensor_msgs::JointState::ConstPtr &msg);
+    
+    void set_tau(double tau_);
+    //managing trajectory functions
     void saveTrajectory();
     void loadTrajectory();
     void printTrajectory();
+    
+    //service functions
     bool makeLFDRequest();
     bool makeSetActiveRequest();
-    bool makeGetPlanRequest();
+    bool makeGetPlanRequest(stvd& x_0_, stvd& x_dot_0_, double t_0_, stvd& goal_, stvd& goal_thresh_, double seg_length_, double tau_, double dt_, int integrate_iter_);
+    void print_dmp_trajectory();
 };

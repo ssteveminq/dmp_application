@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(5);
 
-  // dmpmanager.loadTrajectory();
+  dmpmanager.loadTrajectory();
   bool bool_learned_DMP = dmpmanager.makeLFDRequest();
 
   stvd x_0(2,0.0);
@@ -55,21 +55,21 @@ int main(int argc, char **argv)
   double dt=1.0;
   int integrate_iter = 5; 
 
-  if(bool_learned_DMP)
-    dmpmanager.makeGetPlanRequest(x_0,x_dot_0,t_0,goal,goal_thresh,seg_length,tau,dt,integrate_iter);
+  //if(bool_learned_DMP)
+    //dmpmanager.makeGetPlanRequest(x_0,x_dot_0,t_0,goal,goal_thresh,seg_length,tau,dt,integrate_iter);
 
   while (ros::ok())
   {
     ros::spinOnce();
   	
-    // if(saveiter%50==0) 
-    // {
-    //     dmpmanager.saveTrajectory();
-    //     saveiter=0;
-    // }
+     //if(saveiter%50==0) 
+     //{
+         //dmpmanager.saveTrajectory();
+         //saveiter=0;
+     //}
    
     loop_rate.sleep();
-      // saveiter++;
+    saveiter++;
   }
   ros::spin();
   return 0;

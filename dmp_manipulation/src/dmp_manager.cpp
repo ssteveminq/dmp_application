@@ -43,10 +43,10 @@ void DMP_Manager::saveTrajectory()
 
     for(int i=0; i<JointTrajectoryset.size();i++ )
     {
-        basisTrajectory<<i<<"\t";
+        basisTrajectory<<i<<",";
 
         for(int j=0;j<JointTrajectoryset[i].size();j++) 
-            basisTrajectory<<JointTrajectoryset[i][j]<<"\t";
+            basisTrajectory<<JointTrajectoryset[i][j]<<",";
     
         basisTrajectory<<endl;
     }
@@ -60,16 +60,15 @@ void DMP_Manager::printTrajectory()
     int dof_trj=JointTrajectoryset[0].size();
     ROS_INFO("joint trajectory : time : %d , dof : %d \n", time_size, dof_trj); 
     
-    // for(int i(0);i<JointTrajectoryset.size();i++)
-    // {
-    //     std::cout<<"time : "<<i<<": \t" ;
-    //     for(int j=0;j<JointTrajectoryset[i].size();j++) 
-    //     {
-    //         std::cout<<JointTrajectoryset[i][j]<<"\t";
-    //     }
-
-    //     std::cout<<std::endl;
-    // }
+     for(int i(0);i<JointTrajectoryset.size();i++)
+     {
+         std::cout<<"time : "<<i<<": \t" ;
+         for(int j=0;j<JointTrajectoryset[i].size();j++) 
+         {
+             std::cout<<JointTrajectoryset[i][j]<<",";
+         }
+         std::cout<<std::endl;
+     }
 }
 
 void DMP_Manager::loadTrajectory()
@@ -78,6 +77,7 @@ void DMP_Manager::loadTrajectory()
     int     iter=0;
     float   tempdata=0.0;
     char    *data_seg[50];
+    string  token =",";
     int     i,j=0;
     int     res;
     string  str;
@@ -106,17 +106,18 @@ void DMP_Manager::loadTrajectory()
                 continue;
 
             i=0;
-            data_seg[i] = strtok(spell,"\t");
+            data_seg[i] = strtok(spell,token.c_str());
 
             while(data_seg[i]!=NULL)                       //write data_segment with "\t"
-                data_seg[++i] = strtok(NULL,"\t");
+                data_seg[++i] = strtok(NULL,token.c_str());
             
             Dim=i-1;                                         //check dimension : time-1
 
+            //Dim=4;
             cout<<"Feature dimension is"<<Dim<<endl;
-            tempDataVec.resize(Dim-1);
+            tempDataVec.resize(Dim);
             
-            for(j=1;j<Dim;j++)
+            for(j=1;j<Dim+1;j++)
             {
                 str=data_seg[j];
                 str.erase(str.length(),1) ;
@@ -132,10 +133,10 @@ void DMP_Manager::loadTrajectory()
    laodtrjfile.close();
 
    //setDimension
-   dimension=4;
+   dimension=Dim;
 
    //print trajectory
-   printTrajectory();
+   //printTrajectory();
 }
 
 bool DMP_Manager::makeLFDRequest()
@@ -143,40 +144,41 @@ bool DMP_Manager::makeLFDRequest()
     dmp::DMPTraj trajectory_msgs;
 
     //test with same data with sample.py
-    dimension=2;
-    int time_length = 4;
-    int trj_length =dimension;
+    //dimension=2;
+    //int time_length = 4;
+    //int trj_length =dimension;
 
-    JointTrajectoryset.resize(time_length);
+    //JointTrajectoryset.resize(time_length);
     
-    for(int k(0);k<time_length;k++)
-    {   
-        JointTrajectoryset[k].resize(dimension);
+    //for(int k(0);k<time_length;k++)
+    //{   
+        //JointTrajectoryset[k].resize(dimension);
 
-    }
+    //}
 
-    JointTrajectoryset[0][0]= 1.0;
-    JointTrajectoryset[0][1]= 1.0;
+    //JointTrajectoryset[0][0]= 1.0;
+    //JointTrajectoryset[0][1]= 1.0;
 
-    JointTrajectoryset[1][0]= 2.0;
-    JointTrajectoryset[1][1]= 2.0;
+    //JointTrajectoryset[1][0]= 2.0;
+    //JointTrajectoryset[1][1]= 2.0;
 
-    JointTrajectoryset[2][0]= 3.0;
-    JointTrajectoryset[2][1]= 4.0;
+    //JointTrajectoryset[2][0]= 3.0;
+    //JointTrajectoryset[2][1]= 4.0;
 
-    JointTrajectoryset[3][0]= 6.0;
-    JointTrajectoryset[3][1]= 8.0;
+    //JointTrajectoryset[3][0]= 6.0;
+    //JointTrajectoryset[3][1]= 8.0;
 
-    // int time_length = JointTrajectoryset.size();
-    // int trj_length = JointTrajectoryset[0].size();
-    double dt = 1.0;
+    int time_length = JointTrajectoryset.size();
+    int joint_dof = JointTrajectoryset[0].size();
+    std::cout<<"time : "<<time_length<<", joint_dof : " << joint_dof <<", dim :"<<dimension<<endl;
+    double dt =1;
     double K  = 100.0;
     double D  = 2.0 * sqrt(K);
 
     for(int i(0);i<time_length;i++)
     {
         dmp::DMPPoint dmp_point;        
-        for(int j(0);j<trj_length;j++)
+        for(int j(0);j<joint_dof;j++)
         {
             double tempdata = static_cast<double> (JointTrajectoryset[i][j]);
             dmp_point.positions.push_back(tempdata);
@@ -201,7 +203,7 @@ bool DMP_Manager::makeLFDRequest()
     lfd_srv.request.demo = trajectory_msgs;
     lfd_srv.request.k_gains = Kgains;
     lfd_srv.request.d_gains = Dgains;
-    lfd_srv.request.num_bases = 5;
+    lfd_srv.request.num_bases = 10;
 
     if(client_lfd.call(lfd_srv))
     {

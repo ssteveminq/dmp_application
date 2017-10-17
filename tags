@@ -24,6 +24,7 @@ DMP_H_	dmp/include/dmp/dmp.h	42;"	d
 DMP_Manager	dmp_manipulation/include/dmp_manager.h	/^class DMP_Manager{$/;"	c
 DMP_Manager	dmp_manipulation/src/dmp_manager.cpp	/^DMP_Manager::DMP_Manager(){$/;"	f	class:DMP_Manager
 DetectedObject	villa_manipulation/villa_manipulation/src/villa_manipulation/bwi_perception_module.py	/^class DetectedObject:$/;"	c
+Dgains	dmp_manipulation/include/dmp_manager.h	/^    stvd Dgains;$/;"	m	class:DMP_Manager
 FILE_NAME	villa_common/report_generation/scripts/report_generator	/^FILE_NAME = ""$/;"	v
 FOURIER_APPROX_H_	dmp/include/dmp/fourier_approx.h	42;"	d
 FUNCTION_APPROX_H_	dmp/include/dmp/function_approx.h	42;"	d
@@ -49,8 +50,9 @@ Init_parameters	dmp_manipulation/src/dmp_manager.cpp	/^void DMP_Manager::Init_pa
 JointLimitException	villa_common/villa_helpers/src/villa_helpers/groovy_motion.py	/^class JointLimitException(Exception):$/;"	c
 JointStateCallback_	villa_manipulation/manipulation_tutorials/src/gazed_point_fixing_node.cpp	/^  void JointStateCallback_(const sensor_msgs::JointState& msg) {$/;"	f	class:GazedPointFixing	file:
 JointStates_traj	dmp_manipulation/include/dmp_manager.h	/^    sensor_msgs::JointState JointStates_traj;$/;"	m	class:DMP_Manager
-JointTrajectoryset	dmp_manipulation/include/dmp_manager.h	/^    vector< vector <double> > JointTrajectoryset;$/;"	m	class:DMP_Manager
+JointTrajectoryset	dmp_manipulation/include/dmp_manager.h	/^    vector< stvd >          JointTrajectoryset;       \/\/[time x joint number]$/;"	m	class:DMP_Manager
 K	dmp/script/sample.py	/^    K = 100                 $/;"	v
+Kgains	dmp_manipulation/include/dmp_manager.h	/^    stvd Kgains;$/;"	m	class:DMP_Manager
 LINEAR_APPROX_H_	dmp/include/dmp/linear_approx.h	42;"	d
 LinearApprox	dmp/include/dmp/linear_approx.h	/^class LinearApprox : public FunctionApprox{$/;"	c	namespace:dmp
 LinearApprox	dmp/src/linear_approx.cpp	/^LinearApprox::LinearApprox()$/;"	f	class:dmp::LinearApprox
@@ -166,9 +168,9 @@ add_box	villa_manipulation/manipulation_tutorials/scripts/moveit_pick_and_place_
 add_cylinder	villa_manipulation/manipulation_tutorials/scripts/moveit_pick_and_place_demo.py	/^    def add_cylinder(self, name, radius, height, pos):$/;"	m	class:MoveItPickAndPlaceDemo
 alpha	dmp/src/dmp.cpp	/^double alpha = -log(0.01); \/\/Ensures 99% phase convergence at t=tau$/;"	m	namespace:dmp	file:
 armBindings	villa_common/villa_teleop/scripts/keyboard_teleop	/^armBindings = {$/;"	v
-arm_flex_joint	dmp_manipulation/include/dmp_manager.h	39;"	d
-arm_lift_joint	dmp_manipulation/include/dmp_manager.h	40;"	d
-arm_roll_joint	dmp_manipulation/include/dmp_manager.h	41;"	d
+arm_flex_joint	dmp_manipulation/include/dmp_manager.h	44;"	d
+arm_lift_joint	dmp_manipulation/include/dmp_manager.h	45;"	d
+arm_roll_joint	dmp_manipulation/include/dmp_manager.h	46;"	d
 base	villa_common/villa_demos/scripts/example_move.py	/^base = robot.try_get('omni_base')$/;"	v
 base	villa_common/villa_demos/scripts/example_speech.py	/^base = robot.try_get('omni_base')$/;"	v
 basic_info	villa_common/report_generation/scripts/report_generator	/^def basic_info(path, tryNum):$/;"	f
@@ -191,6 +193,9 @@ cli	villa_manipulation/manipulation_tutorials/scripts/gripper_actionlib_grasp.py
 cli	villa_manipulation/manipulation_tutorials/scripts/gripper_actionlib_trajectory.py	/^cli = actionlib.SimpleActionClient('\/hsrb\/gripper_controller\/grasp', tmc_control_msgs.msg.GripperApplyEffortAction)$/;"	v
 cli	villa_manipulation/manipulation_tutorials/scripts/head_actionlib.py	/^cli = actionlib.SimpleActionClient('\/hsrb\/head_trajectory_controller\/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction)$/;"	v
 cli	villa_manipulation/manipulation_tutorials/scripts/omni_actionlib.py	/^cli = actionlib.SimpleActionClient('\/hsrb\/omni_base_controller\/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction)$/;"	v
+client_gdp	dmp_manipulation/include/dmp_manager.h	/^    ros::ServiceClient client_gdp;$/;"	m	class:DMP_Manager
+client_lfd	dmp_manipulation/include/dmp_manager.h	/^    ros::ServiceClient client_lfd;$/;"	m	class:DMP_Manager
+client_sap	dmp_manipulation/include/dmp_manager.h	/^    ros::ServiceClient client_sap;$/;"	m	class:DMP_Manager
 compute_difference	villa_manipulation/villa_manipulation/scripts/handOver_service.py	/^def compute_difference(pre_data_list, post_data_list):$/;"	f
 construct_marker	villa_common/villa_helpers/scripts/countdown_timer_visualizer	/^def construct_marker(timer_id, seconds_left, position, frame_id):$/;"	f
 convertImage	villa_common/report_generation/scripts/report_generator	/^def convertImage(message):$/;"	f
@@ -300,10 +305,14 @@ list_controllers	villa_manipulation/manipulation_tutorials/scripts/omni_message.
 list_controllers	villa_manipulation/manipulation_tutorials/scripts/omni_message_velocity.py	/^list_controllers = rospy.ServiceProxy('\/hsrb\/controller_manager\/list_controllers', controller_manager_msgs.srv.ListControllers)$/;"	v
 listener	villa_common/villa_helpers/scripts/get_battery_state_value	/^def listener():$/;"	f
 listener_	villa_manipulation/manipulation_tutorials/src/gazed_point_fixing_node.cpp	/^  tf2_ros::TransformListener listener_;$/;"	m	class:GazedPointFixing	file:
+loadTrajectory	dmp_manipulation/src/dmp_manager.cpp	/^void DMP_Manager::loadTrajectory()$/;"	f	class:DMP_Manager
 log	villa_common/villa_helpers/scripts/vlogger	/^    def log(self, req):$/;"	m	class:VLogger
 look_ahead_photo_pose	villa_common/villa_teleop/scripts/keyboard_teleop	/^look_ahead_photo_pose = {"arm": [0.00, 0.00, 0.00, -1.51, 1.60], "head": [0.0, 0.0]}$/;"	v
 look_right_from_above_photo_pose	villa_common/villa_teleop/scripts/keyboard_teleop	/^look_right_from_above_photo_pose = {"arm": [0.60, -0.42, -1.55, -1.57, 2.05], "head": [-1.5, -0.9]}$/;"	v
 look_right_photo_pose	villa_common/villa_teleop/scripts/keyboard_teleop	/^look_right_photo_pose = {"arm": [0.30, -0.42, -1.55, -1.57, 2.05], "head": [-1.5, -0.40]}$/;"	v
+m_dmp_dataset	dmp_manipulation/include/dmp_manager.h	/^    std::vector< dmp::DMPData > m_dmp_dataset;$/;"	m	class:DMP_Manager
+m_dmptrajectory	dmp_manipulation/include/dmp_manager.h	/^    dmp::DMPTraj m_dmptrajectory;$/;"	m	class:DMP_Manager
+m_tau	dmp_manipulation/include/dmp_manager.h	/^    double m_tau;$/;"	m	class:DMP_Manager
 main	dmp/nodes/dmp_server.cpp	/^int main(int argc, char **argv)$/;"	f
 main	dmp_manipulation/src/dmp_test.cpp	/^int main(int argc, char **argv)$/;"	f
 main	villa_common/report_generation/scripts/report_generator	/^def main():$/;"	f
@@ -322,9 +331,12 @@ main	villa_manipulation/manipulation_tutorials/src/head_message.cpp	/^int main(i
 main	villa_manipulation/manipulation_tutorials/src/omni_actionlib.cpp	/^int main(int argc, char **argv)$/;"	f
 main	villa_manipulation/manipulation_tutorials/src/omni_message.cpp	/^int main(int argc, char **argv)$/;"	f
 main	villa_manipulation/manipulation_tutorials/src/omni_message_velocity.cpp	/^int main(int argc, char **argv)$/;"	f
+makeGetPlanRequest	dmp_manipulation/src/dmp_manager.cpp	/^bool DMP_Manager::makeGetPlanRequest(stvd& x_0_, stvd& x_dot_0_, double t_0_, stvd& goal_, stvd& goal_thresh_, double seg_length_, double tau_, double dt_, int integrate_iter_)$/;"	f	class:DMP_Manager
 makeLFDRequest	dmp/script/sample.py	/^def makeLFDRequest(dims, traj, dt, K_gain, $/;"	f
+makeLFDRequest	dmp_manipulation/src/dmp_manager.cpp	/^bool DMP_Manager::makeLFDRequest()$/;"	f	class:DMP_Manager
 makePlanRequest	dmp/script/sample.py	/^def makePlanRequest(x_0, x_dot_0, t_0, goal, goal_thresh, $/;"	f
 makeSetActiveRequest	dmp/script/sample.py	/^def makeSetActiveRequest(dmp_list):$/;"	f
+makeSetActiveRequest	dmp_manipulation/src/dmp_manager.cpp	/^bool DMP_Manager::makeSetActiveRequest()$/;"	f	class:DMP_Manager
 make_filename	villa_common/villa_helpers/scripts/capture_images	/^def make_filename(prefix, count):$/;"	f
 make_grasps	villa_manipulation/manipulation_tutorials/scripts/moveit_pick_and_place_demo.py	/^    def make_grasps(self, target, init,$/;"	m	class:MoveItPickAndPlaceDemo
 make_gripper_posture	villa_manipulation/manipulation_tutorials/scripts/moveit_pick_and_place_demo.py	/^    def make_gripper_posture(self, pos, effort=0.0):$/;"	m	class:MoveItPickAndPlaceDemo
@@ -385,6 +397,8 @@ point	villa_common/report_generation/scripts/report_generator	/^point = 1$/;"	v
 points	dmp/include/dmp/linear_approx.h	/^        std::vector<pt_pair> points;$/;"	m	class:dmp::LinearApprox
 post_process	villa_manipulation/villa_manipulation/src/villa_manipulation/hsrb_perception_module.py	/^    def post_process(self):$/;"	m	class:hsrb_segmentation
 potential_field	other_dmp/PyDMP/dmp/dmp.py	/^def potential_field(dmp, t, v, w, x0, g, tau, dt, o, x_range, y_range,$/;"	f
+printTrajectory	dmp_manipulation/src/dmp_manager.cpp	/^void DMP_Manager::printTrajectory()$/;"	f	class:DMP_Manager
+print_dmp_trajectory	dmp_manipulation/src/dmp_manager.cpp	/^void DMP_Manager::print_dmp_trajectory(){$/;"	f	class:DMP_Manager
 pseudoinverse	dmp/src/fourier_approx.cpp	/^MatrixXd FourierApprox::pseudoinverse(MatrixXd mat){$/;"	f	class:dmp::FourierApprox
 pseudoinverse	dmp/src/radial_approx.cpp	/^MatrixXd RadialApprox::pseudoinverse(MatrixXd mat){$/;"	f	class:dmp::RadialApprox
 pt_pair	dmp/include/dmp/linear_approx.h	/^typedef std::pair<double, double> pt_pair;$/;"	t	namespace:dmp
@@ -464,6 +478,7 @@ setRobot	villa_manipulation/villa_manipulation/scripts/dropOff_service.py	/^clas
 setRobot	villa_manipulation/villa_manipulation/scripts/handOver_service.py	/^class setRobot:$/;"	c
 setRobot	villa_manipulation/villa_manipulation/scripts/pickup_from_table_service.py	/^class setRobot:$/;"	c
 setRobot	villa_manipulation/villa_manipulation/scripts/pickup_service.py	/^class setRobot:$/;"	c
+set_tau	dmp_manipulation/src/dmp_manager.cpp	/^void DMP_Manager::set_tau(double tau_)$/;"	f	class:DMP_Manager
 setup_args	villa_common/report_generation/setup.py	/^setup_args = generate_distutils_setup($/;"	v
 setup_args	villa_common/villa_helpers/setup.py	/^setup_args = generate_distutils_setup($/;"	v
 setup_args	villa_manipulation/villa_manipulation/setup.py	/^setup_args = generate_distutils_setup($/;"	v
@@ -481,6 +496,7 @@ states_cb	villa_common/villa_teleop/scripts/keyboard_teleop	/^def states_cb(msg)
 step	other_dmp/Dynamic-Motion-Primitives/DMPLib.py	/^    def step(self):         $/;"	m	class:DMP
 stop_all	villa_common/villa_teleop/scripts/keyboard_teleop	/^def stop_all():$/;"	f
 strafeBindings	villa_common/villa_teleop/scripts/keyboard_teleop	/^strafeBindings = {$/;"	v
+stvd	dmp_manipulation/include/dmp_manager.h	/^typedef std::vector<double> stvd;$/;"	t
 t	other_dmp/Dynamic-Motion-Primitives/attractorTest.py	/^t = np.arange(0, np.pi\/2, 0.01)$/;"	v
 t_0	dmp/script/sample.py	/^    t_0 = 0                $/;"	v
 target_point_sub_	villa_manipulation/manipulation_tutorials/src/gazed_point_fixing_node.cpp	/^  ros::Subscriber target_point_sub_;$/;"	m	class:GazedPointFixing	file:
@@ -524,8 +540,8 @@ whole_body	villa_common/villa_demos/scripts/example_speech.py	/^whole_body = rob
 whole_body	villa_manipulation/manipulation_tutorials/scripts/open_hinged_door.py	/^        whole_body = robot.get('whole_body')$/;"	v
 whole_body	villa_manipulation/manipulation_tutorials/scripts/pickup_bottle.py	/^        whole_body = robot.get('whole_body')$/;"	v
 widths	dmp/include/dmp/radial_approx.h	/^	double *widths;    \/\/Widths of RBFs$/;"	m	class:dmp::RadialApprox
-wrist_flex	dmp_manipulation/include/dmp_manager.h	42;"	d
-wrist_roll_joint	dmp_manipulation/include/dmp_manager.h	43;"	d
+wrist_flex_joint	dmp_manipulation/include/dmp_manager.h	47;"	d
+wrist_roll_joint	dmp_manipulation/include/dmp_manager.h	48;"	d
 x	plot_practice/plot_example.py	/^x=[1,3,5,6]$/;"	v
 x_0	dmp/script/sample.py	/^    x_0 = [0.0,0.0]          #Plan starting at a different point than demo $/;"	v
 x_dot_0	dmp/script/sample.py	/^    x_dot_0 = [0.0,0.0]   $/;"	v

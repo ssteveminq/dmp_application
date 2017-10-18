@@ -39,7 +39,7 @@ void DMP_Manager::saveTrajectory()
 {
 
     ROS_INFO("save trajectory");
-    basisTrajectory.open("/home/mk/data_dmp/dmp_trajectories.csv");
+    basisTrajectory.open("src/dmp_manipulation/data/dmp_trajectories.csv");
 
     for(int i=0; i<JointTrajectoryset.size();i++ )
     {
@@ -86,7 +86,7 @@ void DMP_Manager::loadTrajectory()
 
     ROS_INFO("load trajectory");
     ifstream laodtrjfile;
-    laodtrjfile.open("/home/mk/data_dmp/dmp_trajectories.csv");
+    laodtrjfile.open("src/dmp_manipulation/data/dmp_trajectories.csv");
 
     //clear joint trajectory
     JointTrajectoryset.clear();
